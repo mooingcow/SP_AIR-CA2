@@ -11,101 +11,71 @@ BED CA2 Assignment
 4. In a web browser, navigate to localhost:3001 to access the website.
 
 *FILE MANIFEST*  
-SP AIR  
-|  
-+- Front-End  
-      |  
-      +-- HTML  
-      	   |  
-	   +--- login.html  
-	   |  
-	   +--- index.html  
-	   |  
-	   +--- promotions.html  
-	   |  
-	   +--- searchresults.html  
-	   |  
-	   +--- profile.html  
-	   |  
-	   +---admin.html  
-	   |  
-	   +--- admin_airports.html  
-	   |  
-	   +--- admin_flights.html  
-	   |  
-	   +--- admin_promotions.html  
-      |
-      +-- Images
-      |
-      +-- Scripts
-      |
-      +-- Stylesheets
+SP AIR
++- Front-End
+|   +-- HTML
+|   |   +--- login.html
+|   |   +--- index.html
+|   |   +--- promotions.html
+|   |   +--- searchresults.html
+|   |   +--- profile.html
+|   |   +--- admin.html
+|   |   +--- admin_airports.html
+|   |   +--- admin_flights.html
+|   |   +--- admin_promotions.html
+|   +-- Images
+|   |   +--- airport.png
+|   |   +--- cross.png
+|   |   +--- down-arrow.png
+|   |   +--- dropdownarrow.png
+|   |   +--- edit.png
+|   |   +--- flight.png
+|   |   +--- login-logo.png
+|   |   +--- planeicon.png
+|   |   +--- plus.png 
+|   |   +--- profileimage.png
+|   |   +--- promotion.png
+|   |   +--- searcharrow.png
+|   |   +--- sp_air-logo.png
+|   +-- Scripts
+|   |   +--- header.js
+|   |   +--- index.js
+|   |   +--- package-lock.json
+|   +-- Stylesheets
+|   |   +--- login.css
+|   |   +--- index.css
+|   |   +--- promotions.css
+|   |   +--- searchresults.css
+|   |   +--- profile.css
+|   |   +--- admin.css
+|   |   +--- admin_airports.css
+|   |   +--- admin_flights.css
+|   |   +--- admin_promotions.css
+|   |   +--- header_footer.css
+|   |   +--- reset.css
++- Back-End
+|   +-- auth
+|   |   +--- isLoggedinMiddleware.js
+|   +-- controller
+|   |   +--- app.js
+|   +-- model
+|   |   +--- airports.js
+|   |   +--- booking.js
+|   |   +--- databaseConfig.js
+|   |   +--- flights.js
+|   |   +--- promotions.js
+|   |   +--- transfers.js
+|   |   +--- users.js
+|   +-- node_modules
+|   +-- uploads
+|   |
+|   config.js
+|   db_InitScript.sql
+|   package-lock.json
+|   package.json
+|   server.js
++- node_modules
 |
-
-		->>> HTML
-			
-		
-		->>> Images
-			airport.png
-			cross.png
-			down-arrow.png
-			dropdownarrow.png
-			edit.png
-			flight.png
-			login-logo.png
-			planeicon.png
-			plus.png
-			profileimage.png
-			promotion.png
-			searcharrow.png
-			sp_air-logo.png
-		
-		->>> Scripts
-			header.js
-			index.js
-			package-lock.json
-		
-		->>> Stylesheets
-			login.css
-			index.css
-			promotions.css
-			searchresults.css
-			profile.css
-			admin.css
-			admin_airports.css
-			admin_flights.css
-			admin_promotions.css
-			header_footer.css
-			reset.css
-
-	->> Back-End
-		->>> auth
-			isLoggedinMiddleware.js
-		
-		->>> controller
-			app.js
-		
-		->>> model
-			airports.js
-			booking.js
-			databaseConfig.js
-			flights.js
-			promotions.js
-			transfers.js
-			users.js
-		
-		->>> node_modules
-		
-		->>> uploads
-		
-		config.js
-		db_InitScript.sql
-		package-lock.json
-		package.json
-		server.js	
-
-	->> node_modules
-
-	Documentation.docx
-	package-lock.json
-	README.txt
+Documentation.docx
+package-lock.json
+README.txt
