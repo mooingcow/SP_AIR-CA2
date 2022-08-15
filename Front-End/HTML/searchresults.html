@@ -1,0 +1,266 @@
+<!--
+    Search Results 
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: searchresults.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SP AIR</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/headerfootercss" rel="stylesheet">
+	<link href="/searchresultscss" rel="stylesheet">
+    <!--Scripts-->
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+		<!--Nav Bar-->
+		<div class="container">
+			<div class="row">
+				<nav>
+					<div id="logodiv">
+						<a href="/">
+							<img src="/logoimage" alt="Plane" id="logoimage">
+						</a>
+						<a href="/" id="logo">SP AIR
+						</a>
+					</div>
+					<ul>
+						<li class="menu"><a href="/promotions">PROMOTIONS</a></li>
+						<li class="menu"><a href="/">HOME</a></li>
+					</ul>
+					<div id="contact">
+					</div>	
+				</nav>
+			</div>
+		  </div>
+	</header>
+    <div id="one">
+        <div id="directflight">	
+	    </div>
+    </div>
+    <div id="two">
+        <div id="returnflight">	
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+    </div>
+
+
+    <script src="/indexjs">
+	</script>
+    <script src="/headerjs">
+    </script>
+    <script>
+        $("document").ready(function() {
+            var query = window.location.search.substring(1);
+            if(query == ""){
+                window.location = "/"
+            };
+            var vars = query.split("&");
+            var flightdetails = [];
+            for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                flightdetails.push(pair);
+            };
+            
+    		const origin = flightdetails[0][1];
+    		const destination = flightdetails[1][1];
+    		const departdate = flightdetails[2][1];
+    		const returndate = flightdetails[3][1];
+            
+            if(returndate == ""){
+                var returnflight = false;
+            } else{
+                returnflight = true;
+            };
+            
+            var avaliableoneflights = false;
+            const baseUrl = "http://localhost:8081";
+            const flightdirectturl = "/flightDirect" + "/" + origin + "/" + destination;
+    		
+            axios.get(`${baseUrl + flightdirectturl}`)
+    		    .then((response1) => {
+                    axios.get(`${baseUrl}/airport`)
+                        .then((response2) => {
+                            console.log(response1.data);
+                            console.log(response2.data);
+                            var origincountry = response2.data[origin-1].country;
+                            var destinationcountry = response2.data[destination-1].country;
+                            console.log(origincountry, destinationcountry);
+                            
+                            $('#directflight').append(origincountry + " to " + destinationcountry);
+                            console.log(response1.data.length);
+                            for(var i=0; i<response1.data.length; i++){
+                                var directdeparture = response1.data[i].embarkDate;
+                                var originairport = response2.data[origin-1].airportname;
+                                var destinationairport = response2.data[destination-1].airportname;
+                                var price = response1.data[i].price;
+                                var flightid = response1.data[i].flightid;
+                                
+                                const d1 = new Date(directdeparture);
+                                const d2 = new Date(departdate);
+
+                                if(d1 > d2){
+                                    avaliableoneflights = true;
+                                    var orginal = 1;
+                                    var next = 4;
+                                    var onclicklink = "window.location='http://localhost:3001/searchresults?from=" + orginal + "&to=" + next + "';"
+                                    var returnhtml = '<div class="flightcard" style="margin-bottom: 5px;" id="directflightcard"><div class="clearfix"><button id="book" type="submit"><div id="price">' + 'SGD<br>' + price + '<br>per Adult' + '</div></button></div><div class="departure" id="directdeparture">' + 'Departing ' + directdeparture + '</div><div class="flightpath"><div class="flightpath" id="origin">' + originairport + '<br>' + '</div><img src="/planeicon" alt="plane" id="planeicon"><div class="flightpath" id="destination">' + destinationairport + '<br>' + '</div></div><br><br><div><img src="/dropdown" alt="arrow" id="dropdownicon"><button class="readmore" id= "readmore' + flightid + '">Read More</button></div></div>';
+
+                                    $('#one').append(returnhtml);
+                                };
+                            };
+                            if(!(avaliableoneflights)){
+                                var returnhtml = '<div class="noflightbanner">No Flights Found</div>';
+                                $('#one').append(returnhtml);
+                            }
+
+
+                            if(returnflight){
+                                var avaliabletwoflights = false;
+                                const baseUrl = "http://localhost:8081";
+                                const flightdirectturl = "/flightDirect" + "/" + destination + "/" + origin;
+
+    		                    axios.get(`${baseUrl + flightdirectturl}`)
+    		                        .then((response3) => {
+                                        axios.get(`${baseUrl}/airport`)
+                                            .then((response4) => {
+                                                console.log(response3.data);
+                                                console.log(response4.data);
+                                            
+                                                var origincountry = response4.data[destination-1].country;
+                                                var destinationcountry = response4.data[origin-1].country;
+                                                $('#returnflight').append(origincountry + " to " + destinationcountry);
+                                            
+                                                for(var i=0; i<response3.data.length; i++){
+                                                    var directdeparture = response3.data[i].embarkDate;
+                                                    var originairport = response4.data[origin-1].airportname;
+                                                    var destinationairport = response4.data[destination-1].airportname;
+                                                    var price = response3.data[i].price;
+                                                    var flightid = response3.data[i].flightid;
+                                                    
+                                                    const d3 = new Date(directdeparture);
+                                                    const d4 = new Date(returndate);
+
+                                                    if(d3 > d4){
+                                                        avaliabletwoflights = true
+                                                        var orginal = 1;
+                                                        var next = 4;             
+                                                        console.log(flightid)
+                                                        var onclicklink = "window.location='http://localhost:3001/searchresults?from=" + orginal + "&to=" + next + "';"
+                                                        var returnhtml = '<div class="flightcard" style="margin-bottom: 5px;" id="directflightcard"><div class="clearfix"><button id="book" type="submit"><div id="price">' + 'SGD<br>' + price + '<br>per Adult' + '</div></button></div><div class="departure" id="directdeparture">' + 'Departing ' + directdeparture + '</div><div class="flightpath"><div class="flightpath" id="origin">' + destinationairport + '<br>' + '</div><img src="/planeicon" alt="plane" id="planeicon"><div class="flightpath" id="destination">' + originairport + '<br>' + '</div></div><br><br><div><img src="/dropdown" alt="arrow" id="dropdownicon"><button class="readmore" id= readmore"' + flightid +'">Read More</button></div></div>'
+                                                    
+                                                        $('#two').append(returnhtml);
+                                                    };
+                                                };
+                                                if(!(avaliabletwoflights)){
+                                                    var returnhtml = '<div class="noflightbanner">No Flights Found</div>';
+                                                    $('#two').append(returnhtml);
+                                                };
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                            });
+                                    })
+    		                        .catch((error) => {
+    		                            console.log(error);
+    		                        });
+                            };
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                })
+    		    .catch((error) => {
+    		        console.log(error);
+    		    });
+            });
+    </script>
+    <script>
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        
+        $(document).on('click', '.readmore', function(event){
+            modal.style.display = "block";
+            
+            var id = '#' + event.target.id;
+            var index = parseInt(id.substring(id.length - 1));
+            
+            var currenturl = window.location.href;
+            var newurl = currenturl + "&flightid=" + index;
+            var flighturl = "/flight" + "/" + index;
+
+            history.pushState(newurl, "Sample Title", newurl);
+
+            axios.get(`${baseUrl + flighturl}`)
+                .then((response) => {
+                    var originAirport = response.data[0].originAirport;
+                    var destinationAirport = response.data[0].destinationAirport;
+
+                    var airporturl1 = "/airport" + "/" + originAirport;
+                    var airporturl2 = "/airport" + "/" + destinationAirport;
+
+                    axios.get(`${baseUrl + airporturl1}`)
+                        .then((response2) => {
+                            axios.get(`${baseUrl + airporturl2}`)
+                                .then((response3) => {
+                                    origincountry = response2.data[0].country;
+                                    destinationcountry = response3.data[0].country;
+
+                                    originairport = response2.data[0].airportname;
+                                    destinationairport = response3.data[0].airportname;
+
+                                    var embarkDate = response.data[0].embarkDate;
+                                    var traveltime = response.data[0].travelTime;
+                                    var flightcode = response.data[0].flightCode;
+                                    var aircraft = response.data[0].aircraft;
+                                    var price = response.data[0].price;
+
+                                    var returnhtml = '<div class="modal-content"><span class="close">&times;</span><div class="flightpath">' + origincountry + ' to ' + destinationcountry + '<br><br></div><div class="hl"></div><div class="travelpath">' + originairport + ' - ' + destinationairport + '<br><br></div><div class="hl" style="margin-bottom: 20px;"></div><div><div class="informationlabel">Embark Date:</div><div class="informationcontent">' + embarkDate + '</div></div><div><div class="informationlabel">Travel Time:</div><div class="informationcontent">' + traveltime + '</div></div><div><div class="informationlabel">Flight Code:</div><div class="informationcontent">' + flightcode + '</div></div><div><div class="informationlabel">Aircraft:</div><div class="informationcontent">' + aircraft + '</div></div><div><div class="informationlabel">Price:</div><div class="informationcontent">$' + price + '</div></div><div class="hl" style="margin-top:20px; margin-bottom:10px;"></div></div></div>';
+                                    $('#myModal').append(returnhtml);
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
+        $(document).on('click', 'span', function(event){
+            modal.style.display = "none";
+            history.pushState(currenturl, "Sample Title", currenturl);
+            window.location.reload();
+        });
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                history.pushState(currenturl, "Sample Title", currenturl);
+                window.location.reload();
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!--
+    Login
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: login.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>		
+	<meta charset="utf-8">
+	<title>Login</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/logincss" rel="stylesheet">
+	<!--Scripts-->
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body style="background-color: #2D9595;">
+	<div id="loginpage">
+		<img src="/loginimage" id="plane"/>
+		<div id="welcome">
+			Welcome back!
+		</div>
+		<form id="login-form">
+			<br>
+			<br>
+			<br>
+			<br>
+			<!--Input Box - Name-->
+			<input name="username" id="loginpage-username" type="text" placeholder="Username"/>
+			<br>
+			
+			<!--Input Box - Password-->
+			<input name="password" id="loginpage-password" type="password" placeholder="Password"/>
+			<br>
+			
+			<!--Submit Button-->
+			<button class="submit"  type="submit">Login</button>
+			<br>
+			<div class="optionsgrid">
+				<div class="options" id="forgotpassword">
+					Forgot Password?
+				</div>
+				<div class="options" id="register">
+					Don't Have An Account?
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div id="registerpage" style="display: none;">
+		<img src="/loginimage" id="plane"/>
+		<div id="welcome">
+			Create an Account.
+		</div>
+		<form id="register-form">
+			<br>
+			<span class="close">&times;</span>
+			<br>
+			<br>
+			<br>
+			<!--Input Box - Username-->
+			<input name="username" id="register-username" type="text" placeholder="Username"/>
+			<br>
+			
+			<!--Input Box - Email-->
+			<input name="password" id="register-password" type="password" placeholder="Password"/>
+			<br>
+			
+			<!--Input Box - Contact-->
+			<input name="contact" id="register-contact" type="text" placeholder="Contact"/>
+			<br>
+			
+			<!--Input Box - Email-->
+			<input name="email" id="register-email" type="email" placeholder="Email"/>
+			<br>
+			
+			<!--Submit Button-->
+			<button class="submit" id="registeraccount" type="submit">Register</button>
+			<br>
+			<br>
+			<br>
+		</form>
+	</div>
+	
+	<div id="forgotpasswordpage" style="display: none;">
+		<img src="/loginimage" id="plane"/>
+		<div id="welcome">
+			Forgot Password?
+		</div>
+		<form id="verification-form">
+			<br>
+			<span class="close">&times;</span>
+			<br>
+			<br>
+			<br>
+			<!--Input Box - Username-->
+			<input name="username" id="forgotpassword-username" type="text" placeholder="Username"/>
+			<br>
+			
+			<!--Input Box - Email-->
+			<input name="email" id="forgotpassword-email" type="email" placeholder="Email"/>
+			<br>
+			
+			<!--Submit Button-->
+			<button class="submit" id="verifydetails" type="button">Next</button>
+			<br>
+			<br>
+			<br>
+		</form>
+		<form id="changepassword-form" style="display: none;">
+			<br>
+			<span class="close">&times;</span>
+			<br>
+			<br>
+			<br>
+			
+			<!--Input Box - Password-->
+			<input name="password" id="changepassword-password" type="text" placeholder="Enter New Password"/>
+			<br>
+			
+			<!--Submit Button-->
+			<button class="submit" id="changepassword" type="button">Change Password</button>
+			<br>
+			<br>
+			<br>
+		</form>
+	</div>
+
+	<script src="/indexjs">
+	</script>
+    <script>
+        const baseUrl = "http://localhost:8081";
+        $("#login-form").submit((event) => {
+            // prevent page reload
+            event.preventDefault();
+
+            const username = $("#loginpage-username").val();
+            const password = $("#loginpage-password").val();
+            const requestBody = {
+                username:username,
+                password:password
+            };
+
+            axios.post(`${baseUrl}/login/`, requestBody)
+                .then((response) => {
+                    const token = response.data.token;
+                    const loggedInUserID = response.data.user_id;
+					const role = response.data.role;
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("loggedInUserID", loggedInUserID);
+                    localStorage.setItem("role", role);
+					if(localStorage.getItem("role") == "Admin"){
+						window.location.href = "/admin";
+					}
+					else{
+						window.location.href = "/";
+					}
+                })
+                .catch((error) => {
+					window.alert("Incorrect Username or Password");
+					return false;
+                    console.log(error);
+                });
+        });
+    </script>
+	<script>
+		$("#register").click(function(){
+			history.pushState("http://localhost:3001", "Sample Title", "/login?register=" + true);
+			document.getElementById("loginpage").className = "slide-out-left";
+			setTimeout(function() {
+    		    $("#loginpage").css('display', 'none');
+				document.getElementById("registerpage").className = "slide-in-right";
+				$("#registerpage").css('display', 'block');
+    		}, 500);
+		});
+		$(".close").click(function(){
+			var page = window.location.search.split("=")[0].substring(1);
+			console.log(page);
+			if(page == "forgotpassword"){
+				history.pushState("http://localhost:3001", "Sample Title", "/login");
+				document.getElementById("forgotpasswordpage").className = "slide-out-left";
+				setTimeout(function() {
+				    $("#forgotpasswordpage").css('display', 'none');
+					document.getElementById("loginpage").className = "slide-in-right";
+					$("#loginpage").css('display', 'block');
+				}, 500);
+			}
+			else if(page == "register"){
+				history.pushState("http://localhost:3001", "Sample Title", "/login");
+				document.getElementById("registerpage").className = "slide-out-right";
+				setTimeout(function() {
+				    $("#registerpage").css('display', 'none');
+					document.getElementById("loginpage").className = "slide-in-left";
+					$("#loginpage").css('display', 'block');
+				}, 500);
+			}
+		});	
+		$("#forgotpassword").click(function(){
+			history.pushState("http://localhost:3001", "Sample Title", "/login?forgotpassword=" + true);
+			document.getElementById("loginpage").className = "slide-out-right";
+			setTimeout(function() {
+				$("#loginpage").css('display', 'none');
+				$("#forgotpasswordpage").css('display', 'block');
+				$("#verification-form").css('display', 'block');
+				document.getElementById("verification-form").className = "";
+				document.getElementById("forgotpasswordpage").className = "slide-in-left";
+			}, 500);
+		});
+		$("#verifydetails").click(function(){
+			axios.get(`${baseUrl}/users/`)
+				.then((response) => {
+					var user = response.data;
+					var username = $("#forgotpassword-username").val();
+					var email = $("#forgotpassword-email").val();
+					var verified = false;
+					for(var i = 0; i < user.length; i++){
+						console.log(user[i].username, username);
+						if(user[i].username == username && user[i].email == email){
+							var userindex = i;
+							verified = true;
+							break
+						}
+					}
+					console.log(verified);
+					if(verified){
+						history.pushState("http://localhost:3001", "Sample Title", "/login?userindex=" + userindex);
+						document.getElementById("verification-form").className = "slide-out-right";
+						setTimeout(function() {
+						    $("#verification-form").css('display', 'none');
+							document.getElementById("changepassword-form").className = "slide-in-left";
+							$("#changepassword-form").css('display', 'block');
+						}, 500);
+					}
+					else{
+						window.alert("Incorrect Username or Email");
+					}
+				})
+		});
+		$("#changepassword").click(function(){
+			axios.get(`${baseUrl}/users/`)
+				.then((response) => {
+					var user = response.data;
+					var userindex = window.location.search.split("=")[1];
+					var currentuser = user[userindex];
+					currentuser.password = $("#changepassword-password").val();
+					var requestBody = currentuser;
+					console.log(requestBody);
+					var nexturl = "/users/" + parseInt(currentuser.userid);
+
+					axios.put(`${baseUrl}${nexturl}`, requestBody)
+						.then((response) => {
+							window.alert("Password Changed");
+							history.pushState("http://localhost:3001", "Sample Title", "/login");
+							window.location.reload();
+						})
+						.catch((error) => {
+							window.alert("Error");
+							console.log(error);
+						});
+				})
+				.catch((error) => {
+					window.alert("Error");
+					console.log(error);
+				});
+		});
+		$("#registeraccount").click(function(){
+			var username = $("#register-username").val();
+			var email = $("#register-email").val();
+			var contact = $("#register-contact").val();
+			var password = $("#register-password").val();
+			var requestBody = {
+				"username": username,
+				"email": email,
+				"contact": contact,
+				"password": password, 
+				"role": "Customer",
+				"profile_pic_url": "https://www.abc.com/" + username + ".jpg"
+			};
+			axios.post(`${baseUrl}/users/`, requestBody)
+				.then((response) => {
+					window.alert("Account Created");
+					history.pushState("http://localhost:3001", "Sample Title", "/login");
+					window.reload();
+				})
+				.catch((error) => {
+					window.alert("You already have an account! Please login instead.");
+					console.log(error);
+				});
+		});
+	</script>
+	<script>
+		
+	</script>
+</body>
+</html>

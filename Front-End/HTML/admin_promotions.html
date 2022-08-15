@@ -1,0 +1,436 @@
+<!--
+    Promotions Control(Admin)  
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: admin_promotions.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SP AIR</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/headerfootercss" rel="stylesheet">
+	<link href="/admin/promotionscss" rel="stylesheet">
+	<!--Scripts-->
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        if(window.location.href.includes("http://localhost:3001/admin")){
+            role = localStorage.getItem("role");
+            if(role != "Admin"){
+                window.location = "/";
+            };
+        };
+    </script>
+</head>
+
+<body style="background-color: whitesmoke;">
+	<header>
+		<!--Nav Bar-->
+		<div class="container" id="navigation">
+			<div class="row">
+				<nav>
+					<div id="logodiv">
+						<a href="/admin">
+							<img src="/logoimage" alt="Plane" id="logoimage">
+						</a>
+						<a href="/admin" id="logo">SP AIR
+						</a>
+					</div>
+					<ul>
+						<li class="menu"><a href="/admin/promotions" id="activelink">PROMOTIONS</a></li>
+						<li class="menu"><a href="/admin/flights">FLIGHTS</a></li>
+						<li class="menu"><a href="/admin/airports">AIRPORTS</a></li>
+						<li class="menu"><a href="/admin">HOME</a></li>
+					</ul>
+					<div id="contact">
+                        <a href="/" id="buttonfont">PUBLIC</a>
+					</div>	
+				</nav>
+			</div>
+		  </div>
+	</header>
+    <div id="airportspage">
+        <div id="welcome">
+            Promotions
+            <img src="/plusimage" alt="plus" id="plusimage">
+        </div>
+    </div>
+    
+    <div class="form-popup" id="myForm">
+        <img src="/cross" alt="cross" class="cancel" id="cancel" onclick="closeForm()">
+        <form class="form-container" id="editform">   
+        </form>
+    </div>
+
+    <div id="myModal" class="modal">
+    </div>   
+    
+
+	<script src="/indexjs">
+	</script>
+    <script>
+        const baseUrl = "http://localhost:8081";
+        const nexturl = "/flight";
+        const nexturl2 = "/airport";
+        const nexturl3 = "/promotion";
+
+        axios.get(`${baseUrl + nexturl}`)
+		    .then((response) => {
+                axios.get(`${baseUrl + nexturl2}`)
+                    .then((response2) => {
+                        axios.get(`${baseUrl + nexturl3}`)
+                            .then((response3) => {       
+                                for(var i = 0; i < response3.data.length; i++){
+                                    var promoid = response3.data[i].promoid;
+                                    var promoflightid = response3.data[i].promoflightid;
+                                    
+                                    for(var j = 0; j < response.data.length; j++){
+                                        var flightid = response.data[j].flightid;
+                                        if(flightid == promoflightid){
+                                            var flightindex = j;
+                                            break
+                                        }
+                                    };
+
+                                    var promostart = response3.data[i].promostart;
+                                    var promoend = response3.data[i].promoend;
+                                    var discount = response3.data[i].discount;
+
+                                    var originid = response.data[flightindex].originAirport;
+                                    var destinationid = response.data[flightindex].destinationAirport;
+                                    var embarkDate = response.data[flightindex].embarkDate;
+                                    var embarkDatelist = embarkDate.split(" ");
+
+                                    var counter = 0;
+                                    while(counter < response2.data.length){
+                                        if(response2.data[counter].airportid == originid){
+                                            var origin = response2.data[counter].country;
+                                            break;
+                                        }
+                                        counter++;
+                                    }
+                                    counter = 0;
+                                    while(counter < response2.data.length){
+                                        if(response2.data[counter].airportid == destinationid){
+                                            var destination = response2.data[counter].country;
+                                            break;
+                                        }
+                                        counter++;
+                                    };
+                                    
+                                    var palette = ["#38BABA", "#34ADAD", "#2C9494", "#216E6E"];
+
+                                    var returnhtml1 = '<div class="card" id="airports"><div class="palette" style="background-color: ' + palette[i] + ';"></div><div class="cardbody"><div class="flightpath">' + origin + ' - ' + destination + '<br><br></div>' + embarkDatelist[0] + '<br>' + embarkDatelist[1] + '</div><div class="hl"></div><div class="discount">Discount: ' + discount + '</div><div class="hl" style="margin-bottom: 10px;"></div><div class="div" style="margin-left:50px;">Start:<br>' + promostart + '</div><div class="vl"></div><div class="div" style="margin-left: 20px;">End:<br>' + promoend + '</div><div class="hl" style="margin-top:15px; margin-bottom:10px;"></div><div class="editdiv edit" id="edit' + promoid + '" onclick="openForm()"><img src="/editimage" alt="edit" id="edit">Edit</div><div class="vl"></div><div class="editdiv delete" id="delete' + promoid + '"><img src="/cross" alt="edit" id="delete">Delete</div></div>';        
+                                    
+                                    $('#airportspage').append(returnhtml1);
+                                };
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+		    })
+		    .catch((error) => {
+                console.log(error);
+		    });
+    </script>
+    <script>
+        function openForm() {
+            document.getElementById("myForm").style.display = "block";
+            document.getElementById("airportspage").style.filter = "blur(5px)";
+            document.getElementById("navigation").style.filter = "blur(5px)";
+        } 
+        function closeForm() {
+            document.getElementById("myForm").style.display = "none";
+            document.getElementById("airportspage").style.filter = "blur(0px)";
+            document.getElementById("navigation").style.filter = "blur(0px)";
+        }
+    </script>
+    <script>
+        $(document).ready(function(){
+            const baseUrl = "http://localhost:8081";
+            const nexturl = "/flight";
+            const nexturl2 = "/airport";
+            const nexturl3 = "/promotion";
+
+            $(document).on('click', '.edit', function(event){
+                var editid = '#' + event.target.id;
+                var indexcounter = 0;
+                var stop = 0;
+                while(stop < editid.length){
+                    if(parseInt(editid[stop])){
+                        indexcounter = stop;
+                        break
+                    }
+                    stop++;
+                }
+                var index = editid.substring(stop);
+                
+                axios.get(`${baseUrl + nexturl}`)
+		            .then((response) => {
+                        axios.get(`${baseUrl + nexturl2}`)
+                            .then((response2) => {
+                                axios.get(`${baseUrl + nexturl3}`)
+                                    .then((response3) => {
+                                        var promoid = index;
+                                        for(var k = 0; k < response3.data.length; k++){
+                                            if(response3.data[k].promoid == promoid){
+                                                i = k;
+                                                break;
+                                            }
+                                        };
+                                        var promoflightid = response3.data[i].promoflightid;
+                                        var promostart = response3.data[i].promostart;
+                                        var promoend = response3.data[i].promoend;
+                                        var discount = response3.data[i].discount;
+                                        
+                                        for (var j = 0; j < response.data.length; j++){
+                                            if(response.data[j].flightid == promoflightid){
+                                                var flightindex = j;
+                                                break
+                                            }
+                                        };
+                                        var originid = response.data[flightindex].originAirport;
+                                        var destinationid = response.data[flightindex].destinationAirport;
+
+                                        var counter = 0;
+                                        while(counter < response2.data.length){
+                                            if(response2.data[counter].airportid == originid){
+                                                var origin = response2.data[counter].country;
+                                                break;
+                                            }
+                                            counter++;
+                                        }
+                                        counter = 0;
+                                        while(counter < response2.data.length){
+                                            if(response2.data[counter].airportid == destinationid){
+                                                var destination = response2.data[counter].country;
+                                                break;
+                                            }
+                                            counter++;
+                                        };
+
+                                        var promoflightoptions = "";
+                                        for(var j = 0; j < response.data.length; j++){
+                                            var flightid = response.data[j].flightid;
+                                            var originairport = response.data[j].originAirport;
+                                            var destinationairport = response.data[j].destinationAirport;
+                                            
+                                            for(var k = 0; k < response2.data.length; k++){
+                                                if(response2.data[k].airportid == originairport){
+                                                    var originoption = response2.data[k].country;
+                                                    break;
+                                                }
+                                            };
+                                            for(var k = 0; k < response2.data.length; k++){
+                                                if(response2.data[k].airportid == destinationairport){
+                                                    var destinationopotion = response2.data[k].country;
+                                                    break;
+                                                }
+                                            };
+
+                                            if(originoption == origin && destinationopotion == destination){
+                                                var selected = true;
+                                            } else{
+                                                var selected = false;
+                                            };
+                                            
+
+                                            if(selected){
+                                                promoflightoptions += '<option value="' + flightid + '" selected>' + origin + ' - ' + destinationopotion + '</option>';
+                                            } else{
+                                                promoflightoptions += '<option value="' + flightid + '">' + originoption + ' - ' + destinationopotion + '</option>';
+                                            };                                        
+                                        };
+
+                                        var returnhtml1 = '<label for="name">Promotion Flight</label><select name="promoflight" class="options" id="promoflightoptions" required><option value="promoflight">Select Flight:</option>' + promoflightoptions + '</select><label for="promostart">Promotion Start Date</label><input type="text" value="'+ promostart + '" name="promostart" id="promostart" required><label for="promoend">Promotion End Date</label><input type="text" value="' + promoend + '" name="promoend" id="promoend" required><label for="discount">Discount</label><input type="text" value="' + discount + '" name="discount" id="discount" required><button type="submit" class="btn" id="' + index + '">Edit Information</button>';
+                                        history.pushState("http://localhost:3001", "Sample Title", "/admin/promotions?" + String(parseInt(index)));
+                                        $('#editform').append(returnhtml1);
+                                        
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+		            })
+		            .catch((error) => {
+                        console.log(error);
+		            });
+            });
+
+            $(document).on('click', '.delete', function(event){
+                var deleteid = '#' + event.target.id;
+                var indexcounter = 0;
+                var stop = 0;
+                while(stop < deleteid.length){
+                    if(parseInt(deleteid[stop])){
+                        indexcounter = stop;
+                        break
+                    }
+                    stop++;
+                }
+                var deleteindex = deleteid.substring(stop);
+                var nexturl2 = "/promotions/" + String(deleteindex);
+                var isDeleted = confirm("Are you sure to delete this promotion?");
+    
+                if(isDeleted){
+                    axios.delete(`${baseUrl + nexturl2}`)
+                        .then((response) => {
+                            console.log(response);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    window.location.reload();
+                } else{
+                    window.location.reload();
+                }   
+            });
+
+            $("#editform").submit((event) => {
+                // prevent page reload
+                event.preventDefault();
+                var newindex = window.location.search.substring(1);
+                console.log(newindex)
+                const baseUrl = "http://localhost:8081";
+                const promotionsurl = "/promotions" + "/" + newindex;
+
+                var promoflightid = $("#promoflightoptions").val();
+                var promostart = $("#promostart").val();
+                var promoend = $("#promoend").val();
+                var discount = $("#discount").val();
+
+                const requestBody = {
+                    promoflightid: promoflightid,
+                    promostart: promostart,
+                    promoend: promoend,
+                    discount: discount
+                };
+                console.log(requestBody);
+                
+                axios.put(`${baseUrl + promotionsurl}`, requestBody)
+                    .then((response) => {
+                        console.log(response)
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                window.location.reload();
+		    });
+            
+            $("#cancel").click(function(){
+                history.pushState("http://localhost:3001", "Sample Title", "/admin/promotions");
+                window.location.reload();
+            });        
+        });
+    </script>
+    <script>
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        
+        $(document).on('click', '#plusimage', function(event){
+            modal.style.display = "block";
+            var currenturl = window.location.href;
+                                    
+            axios.get(`${baseUrl}/flight/`)
+                .then((response3) => {
+                    axios.get(`${baseUrl}/airport/`)
+                        .then((response4) => {
+                            var flights = response3.data;
+                            var airports = response4.data;
+                            var promoflight = "";
+                            for(var i = 0; i < flights.length; i++){
+                                var flight = flights[i];
+                                var flightid = flight.flightid;
+                                var originairport = flight.originAirport;
+                                var destinationairport = flight.destinationAirport;
+                                
+                                for(var j = 0; j < airports.length; j++){
+                                    var airport = airports[j];
+                                    var airportid = airport.airportid;
+                                    if(airportid == originairport){
+                                        var origin = airport.country;
+                                        break;
+                                    }
+                                };
+                                
+                                for(var k = 0; k < airports.length; k++){
+                                    var airport = airports[k];
+                                    var airportid = airport.airportid;
+                                    if(airportid == destinationairport){
+                                        var destination = airport.country;
+                                        break;
+                                    }
+                                };
+
+                                promoflight += '<option value="' + flightid + '">' + origin + " - " + destination + '</option>';
+                            }
+                        
+                            var returnhtml = '<div class="modal-content"><span class="close">&times;</span><form class="form-container" id="addform"><label for="name">Add Promotion to Flight</label><select name="promoflight" class="options" id="promoflight" required><option value="Promo Flight">Promo Flight:</option>' + promoflight + '</select><label for="promostart">Promotion Start</label><input type="text" name="promostart" id="promostart" required><label for="promoend">Promotion End</label><input type="text" name="promoend" id="promoend" required><label for="discount">Discount</label><input type="text" name="discount" id="discount" required><button type="submit" class="btn">Add Promotion</button></form></div>';
+                            $('#myModal').append(returnhtml);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            
+        });
+        $(document).on('click', 'span', function(event){
+            modal.style.display = "none";
+            window.location.reload();
+        });
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                window.location.reload();
+            }
+        };
+        
+        $(document).on('submit', '#addform', function(event){
+            event.preventDefault();
+            var promoflightid = $("#promoflight").val();
+            var promostart = $("#promostart").val();
+            var promoend = $("#promoend").val();
+            var discount = $("#discount").val();
+            var nexturl = "/promotions";
+            var requestBody = {
+                promoflightid: promoflightid,
+                promostart: promostart,
+                promoend: promoend,
+                discount: discount
+            };
+            console.log(requestBody);
+            axios.post(`${baseUrl + nexturl}`, requestBody)
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            window.location.reload();
+        });
+    </script>
+</html>

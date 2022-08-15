@@ -1,0 +1,107 @@
+@charset "utf-8";
+
+#welcome{
+    color: #2D9595;
+    font-family: 'Montserrat', serif;
+    font-size: 50px;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 270px;
+    margin-bottom: 50px;
+}
+.options{
+	width: 20%;
+	height: 50px;
+	font-family: 'Montserrat', serif;
+    font-size: large;
+    border: 2px solid lightgrey;
+    border-radius: 10px;
+
+	-webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+
+	background-image: url('/dropdownarrow');
+    background-repeat: no-repeat;
+    background-size: 15px;
+    background-position: right 10px center, left 10px center;
+    padding-right: 35px;
+}
+.options:focus{
+    color: black;
+    outline-color: #2D9595;
+    font-family: 'Montserrat', serif;
+    font-size: large;
+}
+.options:hover{
+	border: 2px solid #2D9595;
+    border-radius: 10px;
+}
+.options:after{
+    content: none;
+}
+.dates{
+    width: 20%;
+	height: 45px;
+	font-family: 'Montserrat', serif;
+    font-size: large;
+    border: 2px solid lightgrey;
+    border-radius: 10px;
+}
+.dates:focus{
+    color: black;
+    outline-color: #2D9595;
+    font-family: 'Montserrat', serif;
+    font-size: large;
+}
+.dates:hover{
+	border: 2px solid #2D9595;
+    border-radius: 10px;
+}
+.dates:after{
+    content: none;
+}
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: black;
+    font-family: 'Montserrat', serif;
+    font-size: large;
+}
+::-moz-placeholder { /* Firefox 19+ */
+    color: black;
+    font-family: 'Montserrat', serif;
+    font-size: large;
+}
+:-ms-input-placeholder { /* IE 10+ */
+    color: black;
+    font-family: 'Montserrat', serif;
+    font-size: large;
+}
+:-moz-placeholder { /* Firefox 18- */
+    color: black;
+    font-family: 'Montserrat', serif;
+    font-size: large;
+}
+#submit{
+	background-color: #008080;
+	font-family: 'Montserrat', serif;
+	font-size: large;
+	border: none;
+  	color: white;
+	text-align: center;
+	text-decoration: none;
+  	/*display: block;
+    margin: auto;*/
+  	cursor: pointer;
+  	border-radius: 10px;
+	padding-top: 2px;
+	padding-bottom: 3px;
+  	padding-left: 15px;
+	padding-right: 15px;
+  	height: 55px;
+	width: 10%;
+}
+#searcharrow{
+    height: 15px;
+    width: auto;
+}

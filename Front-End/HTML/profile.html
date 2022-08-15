@@ -1,0 +1,258 @@
+<!--
+    Profile 
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: profile.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>	
+	<meta charset="utf-8">
+	<title>SP AIR</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/headerfootercss" rel="stylesheet">
+	<link href="/profilecss" rel="stylesheet">
+	<!--Scripts-->
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script>
+        const baseUrl = "http://localhost:3001";
+        const token = localStorage.getItem("token");
+        const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+
+        if(token === null || isNaN(loggedInUserID)){
+            window.location = "/";
+        }
+    </script>
+</head>
+
+<body style="background-color: white;">
+	<header>
+		<!--Nav Bar-->
+		<div class="container">
+			<div class="row">
+				<nav>
+					<div id="logodiv">
+						<a href="/">
+							<img src="/logoimage" alt="Plane" id="logoimage">
+						</a>
+						<a href="/" id="logo">SP AIR
+						</a>
+					</div>
+					<ul>
+						<li class="menu"><a href="/promotions">PROMOTIONS</a></li>
+						<li class="menu"><a href="/">HOME</a></li>
+					</ul>
+					<div id="contact">
+                        <a href="/" id="buttonfont">LOGOUT</a>
+					</div>	
+				</nav>
+			</div>
+		  </div>
+	</header>
+
+    <div id="profilepage">
+	    <div id="profilecontainer">
+            <div class="box">
+                <img src="http://localhost:8081/uploads\default.jpg" alt="" class="profileimage">
+                <div class="text">
+                    Edit
+                </div>
+            </div>
+            <div id="username">
+            </div>
+        </div>
+        <div id="informationcontainer">
+            <div id="editinfo" onclick="openForm()">
+                Edit Information<br>
+            </div>
+            <div id="information">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-popup" id="myForm">
+        <img src="/cross" alt="cross" class="cancel" id="cancel" onclick="closeForm()">
+        <form class="form-container" id="editform">
+        </form>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="imageupload" enctype="multipart/form-data">
+                <label for="imagefile" class="custom-file-upload">
+                    Upload Profile Picture...
+                </label>
+                <input type="file" name="imagefile" id="imagefile"/>
+                <input type="button" name="Submit" value="Submit" id="imageuploadsubmit"/>
+            </form>
+        </div>
+    </div>
+        
+	<script src="/indexjs">
+	</script>
+    <script>
+        $(document).ready(function(){
+            $("#contact").click(function(){
+                localStorage.removeItem("token");
+                localStorage.removeItem("loggedInUserID");
+            });
+        });
+    </script>
+    <script>
+        function openForm() {
+            document.getElementById("myForm").style.display = "block";
+            document.getElementById("profilepage").style.filter = "blur(5px)";
+        } 
+        function closeForm() {
+            document.getElementById("myForm").style.display = "none";
+            document.getElementById("profilepage").style.filter = "blur(0px)";
+        }
+    </script>
+    <script>
+        $(document).ready(function(){
+            const userid = localStorage.getItem("loggedInUserID");
+            const baseUrl = "http://localhost:8081";
+            const userurl = "/users" + "/" + userid;
+            const imageurl = "/profilepicture" + "/" + userid;
+            axios.get(`${baseUrl + userurl}`)
+			    .then((response) => {
+                    axios.get(`${baseUrl + imageurl}`)
+                        .then((response2) => {
+                            console.log(response2.data[0].imagepath)
+                            $(".profileimage").attr("src","http://localhost:8081/" + response2.data[0].imagepath);
+
+                            email = response.data[0].email;
+                            contact = response.data[0].contact;
+                            password = response.data[0].password;
+                            username = response.data[0].username;
+                            role = response.data[0].role;
+
+                            var returnhtml1 = '<label for="email">Email</label><input type="text" value="' + email + '" name="email" id="email" required><label for="contact">Contact</label><input type="text" value="' + contact + '" name="contact" id="contactnumber" required><label for="psw">Password</label><input type="password" value="'+ password + '" name="psw" id="pwd" required><button type="submit" class="btn">Edit Information</button>';
+                            var returnhtml2 = 'Email: ' + email + '<br><br>Contact Number: ' + contact + '<br><br>Role: ' + role;
+                            var returnhtml3 = username
+                            $('#information').append(returnhtml2);
+                            $('#username').append(returnhtml3);
+
+                            $("#editinfo").click(function(){
+                                $('#editform').append(returnhtml1);
+                            });
+
+                            $("#cancel").click(function(){
+                                window.location.reload();
+                            });
+                        
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });	
+			    })
+			    .catch((error) => {
+                    console.log(error);
+			    });     
+        });
+    </script>
+    <script>
+        $("#editform").submit((event) => {
+            // prevent page reload
+            event.preventDefault();
+            const userid = localStorage.getItem("loggedInUserID");
+            const baseUrl = "http://localhost:8081";
+            const userurl = "/users" + "/" + userid;
+            axios.get(`${baseUrl + userurl}`)
+			    .then((response) => {
+                    var requestBody = response.data[0];
+                    requestBody.email = $("#email").val();
+                    requestBody.contact = $("#contactnumber").val();
+                    requestBody.password = $("#pwd").val();
+                    console.log(requestBody);
+
+                    axios.put(`${baseUrl + userurl}`, requestBody)
+                        .then((response) => {
+                            window.location.reload();
+                            console.log(response)
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+			        })
+			    .catch((error) => {
+			    	console.log(error);
+			    });
+        });
+    </script>
+    <script>
+        $(".profileimage").hover(function(){
+            $(".profileimage").css("filter", "blur(5px)");
+            $(".text").css("display", "block");  
+        });
+        $(".profileimage").mouseleave(function(){
+            $(".profileimage").css("filter", "blur(0px");
+            $(".text").css("display", "none");
+        });
+        $(".profileimage").click(function(){
+            $("#myModal").css("display", "block");
+        });
+
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        
+        $(document).on('click', 'span', function(event){
+            modal.style.display = "none";
+            window.location.reload();
+        });
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                window.location.reload();
+            }
+        };
+
+        $("#imagefile").change(function () {
+                if($(this).val()){
+                    $(".custom-file-upload").text($("#imagefile").val().replace(/C:\\fakepath\\/i, ''));
+                }
+                else{
+                    $(".custom-file-upload").text("Upload Profile Picture...");
+                }
+        });
+
+        $("#imageuploadsubmit").click(function(){
+            const userid = localStorage.getItem("loggedInUserID");
+            const baseUrl = "http://localhost:8081";
+            const imageurl = "/profilepicture" + "/" + userid;
+            
+            var formData = new FormData();
+            var imagefile = document.querySelector('#imagefile');
+            formData.append("profilePicture", imagefile.files[0]);
+            axios.put(`${baseUrl + imageurl}`, formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then((response) => {
+                    window.location.reload();
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    window.alert("Error uploading image. Please choose a new image. ");
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!--
+    Promotions (Public)
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: promotions.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SP AIR</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/headerfootercss" rel="stylesheet">
+	<link href="/promotionscss" rel="stylesheet">
+	<!--Scripts-->
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body style="background-color: whitesmoke;">
+    <header>
+		<!--Nav Bar-->
+		<div class="container">
+			<div class="row">
+				<nav>
+					<div id="logodiv">
+						<a href="/">
+							<img src="/logoimage" alt="Plane" id="logoimage">
+						</a>
+						<a href="/" id="logo">SP AIR
+						</a>
+					</div>
+					<ul>
+						<li class="menu"><a href="/promotions" id="activelink">PROMOTIONS</a></li>
+						<li class="menu"><a href="/">HOME</a></li>
+					</ul>
+					<div id="contact">
+					</div>	
+				</nav>
+			</div>
+		  </div>
+	</header>
+    
+    <div id="airportspage">
+        <div id="welcome">
+            Promotions
+        </div>
+    </div>
+    
+    
+	<script src="/indexjs">
+	</script>
+    <script src="/headerjs">
+	</script>
+    <script>
+        const nexturl = "/flight";
+        const nexturl2 = "/airport";
+        const nexturl3 = "/promotion";
+
+        axios.get(`${baseUrl + nexturl}`)
+		    .then((response) => {
+                axios.get(`${baseUrl + nexturl2}`)
+                    .then((response2) => {
+                        axios.get(`${baseUrl + nexturl3}`)
+                            .then((response3) => {       
+                                for(var i = 0; i < response3.data.length; i++){
+                                    var promoid = response3.data[i].promoid;
+                                    var promoflightid = response3.data[i].promoflightid;
+                                    var promostart = response3.data[i].promostart;
+                                    var promoend = response3.data[i].promoend;
+                                    var discount = response3.data[i].discount;
+
+                                    var originid = response.data[promoflightid-1].originAirport;
+                                    var destinationid = response.data[promoflightid-1].destinationAirport;
+                                    var embarkDate = response.data[promoflightid-1].embarkDate;
+                                    var embarkDatelist = embarkDate.split(" ");
+
+                                    var counter = 0;
+                                    while(counter < response2.data.length){
+                                        if(response2.data[counter].airportid == originid){
+                                            var origin = response2.data[counter].country;
+                                            break;
+                                        }
+                                        counter++;
+                                    }
+                                    counter = 0;
+                                    while(counter < response2.data.length){
+                                        if(response2.data[counter].airportid == destinationid){
+                                            var destination = response2.data[counter].country;
+                                            break;
+                                        }
+                                        counter++;
+                                    };
+                                    
+                                    var palette = ["#38BABA", "#34ADAD", "#2C9494", "#216E6E"];
+
+                                    var returnhtml1 = '<div class="card" id="airports"><div class="palette" style="background-color: ' + palette[i] + ';"></div><div class="cardbody"><div class="flightpath">' + origin + ' - ' + destination + '<br><br></div>' + embarkDatelist[0] + '<br>' + embarkDatelist[1] + '</div><div class="hl"></div><div class="discount">Discount: ' + discount + '</div><div class="hl" style="margin-bottom: 10px;"></div><div class="div" style="margin-left:50px;">Start:<br>' + promostart + '</div><div class="vl"></div><div class="div" style="margin-left: 20px;">End:<br>' + promoend + '</div></div>';        
+                                    
+                                    $('#airportspage').append(returnhtml1);
+                                };
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+		    })
+		    .catch((error) => {
+                console.log(error);
+		    });
+    </script>
+</html>

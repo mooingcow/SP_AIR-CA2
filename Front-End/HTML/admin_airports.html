@@ -1,0 +1,277 @@
+<!--
+    Airports Control(Admin) 
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: searchresults.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SP AIR</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/headerfootercss" rel="stylesheet">
+	<link href="/admin/airportscss" rel="stylesheet">
+	<!--Scripts-->
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        if(window.location.href.includes("http://localhost:3001/admin")){
+            role = localStorage.getItem("role");
+            if(role != "Admin"){
+                window.location = "/";
+            };
+        };
+    </script>
+</head>
+
+<body style="background-color: whitesmoke;">
+	<header>
+		<!--Nav Bar-->
+		<div class="container" id="navigation">
+			<div class="row">
+				<nav>
+					<div id="logodiv">
+						<a href="/admin">
+							<img src="/logoimage" alt="Plane" id="logoimage">
+						</a>
+						<a href="/admin" id="logo">SP AIR
+						</a>
+					</div>
+					<ul>
+						<li class="menu"><a href="/admin/promotions">PROMOTIONS</a></li>
+						<li class="menu"><a href="/admin/flights">FLIGHTS</a></li>
+						<li class="menu"><a href="/admin/airports" id="activelink">AIRPORTS</a></li>
+						<li class="menu"><a href="/admin">HOME</a></li>
+					</ul>
+					<div id="contact">
+                        <a href="/" id="buttonfont">PUBLIC</a>
+					</div>	
+				</nav>
+			</div>
+		  </div>
+	</header>
+    <div id="airportspage">
+        <div id="welcome">
+            Airports
+            <img src="/plusimage" alt="plus" id="plusimage">
+        </div>        
+    </div>
+    
+    <div class="form-popup" id="myForm">
+        <img src="/cross" alt="cross" class="cancel" id="cancel" onclick="closeForm()">
+        <form class="form-container" id="editform">
+        </form>
+    </div>
+    
+    <div id="myModal" class="modal">
+    </div>
+
+	<script src="/indexjs">
+	</script>
+    <script>
+        const baseUrl = "http://localhost:8081";
+        const nexturl = "/airport";
+
+        axios.get(`${baseUrl + nexturl}`)
+		    .then((response) => {
+		    	console.log(response);
+                var counter = response.data.length + 1;
+                var palette = ["#38BABA", "#34ADAD", "#2C9494", "#216E6E"];
+                var counter1 = 0;
+                
+                for(var i = 1; i < counter; i++){
+                    if(counter1 ==4){
+                        var counter1 = 0;
+                    };
+
+                    var airportid = response.data[i-1].airportid;
+                    var airportname = response.data[i-1].airportname;
+                    var country = response.data[i-1].country;
+                    var description = response.data[i-1].description;
+
+
+                    var returnhtml1 = '<div class="card" id="airports"><div class="palette" style="background-color: ' + palette[counter1] +';"></div><div class="cardbody"><div class="airport">' + airportname + '<br><br></div>' + description + '</div><div class="hl"></div><div class="country">' + country + '</div><div class="hl" style="margin-bottom: 10px;"></div><div class="div edit" id="edit' + airportid + '" onclick="openForm()"><img src="/editimage" alt="edit" id="edit">Edit</div><div class="vl"></div><div class="div delete" id="delete' + airportid  + '"><img src="/cross" alt="edit" id="delete">Delete</div></div>';
+                    $('#airportspage').append(returnhtml1);
+                    counter1++;
+                };
+		    })
+		    .catch((error) => {
+                console.log(error);
+		    });
+    </script>
+    <script>
+        function openForm() {
+            document.getElementById("myForm").style.display = "block";
+            document.getElementById("airportspage").style.filter = "blur(5px)";
+            document.getElementById("navigation").style.filter = "blur(5px)";
+        } 
+        function closeForm() {
+            document.getElementById("myForm").style.display = "none";
+            document.getElementById("airportspage").style.filter = "blur(0px)";
+            document.getElementById("navigation").style.filter = "blur(0px)";
+        }
+    </script>
+    <script>
+        $(document).on('click', '.edit', function(event){
+            var editid = '#' + event.target.id;
+            var indexcounter = 0;
+            var stop = 0;
+            while(stop < editid.length){
+                if(parseInt(editid[stop])){
+                    indexcounter = stop;
+                    break
+                }
+                stop++;
+            }
+            var id = editid.substring(stop);
+            
+            axios.get(`${baseUrl + nexturl}`)
+                .then((response) => {
+                    for(var i = 0; i < response.data.length; i++){
+                        if(response.data[i].airportid == id){
+                            var airportid = response.data[i].airportid;
+                            var airportname = response.data[i].airportname;
+                            var country = response.data[i].country;
+                            var description = response.data[i].description;
+                            var returnhtml = '<label for="name">Airport Name</label><input type="text" value="' + airportname + '" name="airportname" id="airportname" required><label for="country">Country</label><input type="text" value="' + country + '" name="country" id="country" required><label for="description">Description</label><input type="text" value="'+ description + '" name="description" id="description" required><button type="submit" class="btn" id="' + id + '">Edit Information</button>';
+                            $('#editform').append(returnhtml);
+                            break;
+                        }
+                    }
+                    history.pushState("http://localhost:3001", "Sample Title", "/admin/airports?" + String(parseInt(id)));
+		        })
+		        .catch((error) => {
+                    console.log(error);
+		        });
+        });
+
+        $(document).on('click', '.delete', function(event){
+            var deleteid = '#' + event.target.id;
+            var indexcounter = 0;
+            var stop = 0;
+            while(stop < deleteid.length){
+                if(parseInt(deleteid[stop])){
+                    indexcounter = stop;
+                    break
+                }
+                stop++;
+            }
+            var deleteindex = deleteid.substring(stop);
+            var nexturl2 = "/airport/" + String(deleteindex);
+            var isDeleted = confirm("Are you sure to delete this airport?");
+            if(isDeleted){
+                axios.delete(`${baseUrl + nexturl2}`)
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                window.location.reload();
+            } else{
+                window.location.reload();
+            }   
+        });
+
+        $("#editform").submit((event) => {
+            // prevent page reload
+            event.preventDefault();
+            var newindex = window.location.search.substring(1);
+            console.log(newindex)
+            const baseUrl = "http://localhost:8081";
+            const airporturl = "/airport" + "/" + newindex;
+            
+            airportname = $("#airportname").val();
+            country = $("#country").val();
+            description = $("#description").val();
+            const requestBody = {
+                airportname:airportname,
+                country:country,
+                description:description
+            };
+            console.log(requestBody);
+            
+            axios.put(`${baseUrl + airporturl}`, requestBody)
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            window.location.reload();
+		});
+        
+        $("#cancel").click(function(){
+            history.pushState("http://localhost:3001", "Sample Title", "/admin/airports");
+            window.location.reload();
+        });        
+    </script>
+    <script>
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        
+        $(document).on('click', '#plusimage', function(event){
+            modal.style.display = "block";
+            
+            var currenturl = window.location.href;
+            
+            var returnhtml = '<div class="modal-content"><span class="close">&times;</span><form class="form-container" id="addform"><label for="name">Airport Name</label><input type="text" name="airportname" id="airportname" required><label for="country">Country</label><input type="text" name="country" id="country" required><label for="description">Description</label><input type="text" name="description" id="description" required><button type="submit" class="btn">Add Airport</button></form></div>';
+            $('#myModal').append(returnhtml);
+        });
+        $(document).on('click', 'span', function(event){
+            modal.style.display = "none";
+            window.location.reload();
+        });
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                window.location.reload();
+            }
+        };
+        
+        $(document).on('submit', '#addform', function(event){
+            // prevent page reload
+            event.preventDefault();
+            var currenturl = window.location.href;
+            const baseUrl = "http://localhost:8081";
+            const airporturl = "/airport";
+            
+            airportname = $("#airportname").val();
+            country = $("#country").val();
+            description = $("#description").val();
+            const requestBody = {
+                airportname:airportname,
+                country:country,
+                description:description
+            };
+            console.log(requestBody);
+            
+            axios.post(`${baseUrl + airporturl}`, requestBody)
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
