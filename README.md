@@ -11,18 +11,39 @@ BED CA2 Assignment
 4. In a web browser, navigate to localhost:3001 to access the website.
 
 *FILE MANIFEST*  
-> SP AIR  
-	->> Front-End
+SP AIR  
+|  
++- Front-End  
+      |  
+      +-- HTML  
+      	   |  
+	   +--- login.html  
+	   |  
+	   +--- index.html  
+	   |  
+	   +--- promotions.html  
+	   |  
+	   +--- searchresults.html  
+	   |  
+	   +--- profile.html  
+	   |  
+	   +---admin.html  
+	   |  
+	   +--- admin_airports.html  
+	   |  
+	   +--- admin_flights.html  
+	   |  
+	   +--- admin_promotions.html  
+      |
+      +-- Images
+      |
+      +-- Scripts
+      |
+      +-- Stylesheets
+|
+
 		->>> HTML
-			login.html
-			index.html
-			promotions.html
-			searchresults.html
-			profile.html
-			admin.html
-			admin_airports.html
-			admin_flights.html
-			admin_promotions.html
+			
 		
 		->>> Images
 			airport.png
