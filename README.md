@@ -10,10 +10,10 @@ BED CA2 Assignment
 6. Launch 'index.js' by typing 'node index.js'.
 4. In a web browser, navigate to localhost:3001 to access the website.
 
-*FILE MANIFEST*
-> SP AIR
-	>> Front-End
-		>>> HTML
+*FILE MANIFEST*  
+-> SP AIR\ 
+	->> Front-End
+		->>> HTML
 			login.html
 			index.html
 			promotions.html
@@ -24,7 +24,7 @@ BED CA2 Assignment
 			admin_flights.html
 			admin_promotions.html
 		
-		>>> Images
+		->>> Images
 			airport.png
 			cross.png
 			down-arrow.png
@@ -39,12 +39,12 @@ BED CA2 Assignment
 			searcharrow.png
 			sp_air-logo.png
 		
-		>>> Scripts
+		->>> Scripts
 			header.js
 			index.js
 			package-lock.json
 		
-		>>> Stylesheets
+		->>> Stylesheets
 			login.css
 			index.css
 			promotions.css
@@ -57,14 +57,14 @@ BED CA2 Assignment
 			header_footer.css
 			reset.css
 
-	>> Back-End
-		>>> auth
+	->> Back-End
+		->>> auth
 			isLoggedinMiddleware.js
 		
-		>>> controller
+		->>> controller
 			app.js
 		
-		>>> model
+		->>> model
 			airports.js
 			booking.js
 			databaseConfig.js
@@ -73,9 +73,9 @@ BED CA2 Assignment
 			transfers.js
 			users.js
 		
-		>>> node_modules
+		->>> node_modules
 		
-		>>> uploads
+		->>> uploads
 		
 		config.js
 		db_InitScript.sql
@@ -83,7 +83,7 @@ BED CA2 Assignment
 		package.json
 		server.js	
 
-	>> node_modules
+	->> node_modules
 
 	Documentation.docx
 	package-lock.json
