@@ -1,0 +1,129 @@
+<!--
+    Home (Public)
+    Author: Jedidiah Phua Shengjie
+    Date: 	2022-08-06
+
+    Filename: index.html
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SP AIR</title>
+	<!--Web Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!--Stylesheets-->
+	<link href="/resetcss" rel="stylesheet">
+	<link href="/headerfootercss" rel="stylesheet">
+	<link href="/indexcss" rel="stylesheet">
+	<!--Scripts-->
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body style="background-color: white;">
+	<header>
+		<!--Nav Bar-->
+		<div class="container">
+			<div class="row">
+				<nav>
+					<div id="logodiv">
+						<a href="/">
+							<img src="/logoimage" alt="Plane" id="logoimage">
+						</a>
+						<a href="/" id="logo">SP AIR
+						</a>
+					</div>
+					<ul>
+						<li class="menu"><a href="/promotions">PROMOTIONS</a></li>
+						<li class="menu"><a href="/" id="activelink">HOME</a></li>
+					</ul>
+					<div id="contact">
+					</div>	
+				</nav>
+			</div>
+		  </div>
+	</header>
+
+	<div id="welcome">
+		Find A Flight For You	
+	</div>
+
+	<form id="dropdownform" >		
+  		<select name="from" class="options" id="from" style="margin-left: 3.5%;">
+    		<option value="From">From:</option>
+		</select>
+		<select name="to" class="options" id="to">
+			<option value="To">To:</option>
+		</select>
+		<!--Date - Date Selector-->
+		<input type="text" class="dates" id="depart" placeholder="Departure:"
+        	onfocus="(this.type='date')"
+        	onblur="(this.type='text')">
+		<input type="text" class="dates" id="return" placeholder="Return:"
+        	onfocus="(this.type='date')"
+        	onblur="(this.type='text')">
+		<button id="submit" type="submit">
+			<img src="/searcharrow" alt="search" id="searcharrow">
+			Search
+		</button>
+	</form>
+	
+	<script src="/indexjs">
+	</script>
+	<script src="/headerjs">
+	</script>	
+	<script>
+		axios.get(`${baseUrl}/airport/`)
+			.then((response) => {
+				var airports = response.data;
+				var airportlist = [];
+				for(var i = 0; i < airports.length; i++){
+					var airport = airports[i];
+					var country = airport.country;
+					var airportid = airport.airportid;
+					if(country){
+						$('#from').append('<option value="' + airportid + '">' + country + '</option>')
+						$('#to').append('<option value="' + airportid + '">' + country + '</option>')
+					}
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	</script>
+	<script>
+		$("#dropdownform").submit((event) => {
+    		// prevent page reload
+    		event.preventDefault();
+
+			const clienturl = "http://localhost:3001";
+    		const origin = $("#from").val();
+    		const destination = $("#to").val();
+    		const departdate = $("#depart").val();
+    		const returndate = $("#return").val();
+    		const nexturl = "/searchresults?from=" + origin + "&" + "to=" + destination + "&" + "departdate=" + departdate + "&" + "returndate=" + returndate;
+			
+			const d1 = new Date(departdate);
+			const d2 = new Date(returndate);
+            if(d1 > d2){
+				window.alert("Return date must be after departure date");
+			} else if(origin == "From" || destination == "To"){
+				window.alert("Please select a valid origin and destination");
+			} else if(departdate == ""){
+				window.alert("Please select a valid departure date");		
+			} else{
+				window.location = clienturl + nexturl;
+			};
+		});
+	</script>
+</body>
+</html>
