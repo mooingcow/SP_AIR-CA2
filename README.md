@@ -11,7 +11,7 @@ BED CA2 Assignment
 4. In a web browser, navigate to localhost:3001 to access the website.
 
 *FILE MANIFEST*  
--> SP AIR\ 
+> SP AIR  
 	->> Front-End
 		->>> HTML
 			login.html
